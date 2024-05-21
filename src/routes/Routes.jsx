@@ -9,7 +9,7 @@ const AppRoutes = () => {
   return (
     <Routes>
       <Route element={<ProtectedRoute />}>
-        <Route path="/" exact element={<Layout />} />
+        <Route path="/" element={<Layout />} />
       </Route>
       <Route path="/login" element={<LoginSignupPage isLogin />} />
       <Route path="/sign-up" element={<LoginSignupPage />} />

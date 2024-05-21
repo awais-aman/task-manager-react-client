@@ -11,7 +11,6 @@ import AppRoutes from "routes/Routes";
 import ErrorBoundary from "components/shared/ErrorBoundary";
 import { theme } from "assets/theme";
 import store, { persistor } from "store/store";
-import "react-toastify/dist/ReactToastify.css";
 
 function App() {
   return (
