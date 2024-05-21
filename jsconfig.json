@@ -1,6 +1,7 @@
 {
   "compilerOptions": {
-    "baseUrl": "./src"
+    "baseUrl": "./src",
+    "jsx": "react-jsx"
   },
-  "include": ["src", "src/routes/ProtectedRoute.jsx", "src/routes/Routes.js"]
+  "include": ["src"]
 }

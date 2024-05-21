@@ -1,4 +1,3 @@
-import React from "react";
 import { Puff } from "react-loader-spinner";
 import { Box } from "@mui/material";
 import { useTheme } from "@mui/styles";

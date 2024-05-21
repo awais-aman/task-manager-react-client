@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import { useState } from "react";
 import { useDispatch } from "react-redux";
 import { Formik, Form } from "formik";
 import { toast } from "react-toastify";
@@ -20,7 +20,7 @@ import validationSchema from "modules/Tasks/Form/validationSchema";
 import { styles } from "assets/styles";
 import { Box } from "@mui/material";
 
-const AddToDoForm = ({ formState, isEdit, setFormState }) => {
+const AddToDoForm = ({ formState, isEdit }) => {
   const classes = styles();
   const [isLoading, setIsLoading] = useState(false);
   const dispatch = useDispatch();

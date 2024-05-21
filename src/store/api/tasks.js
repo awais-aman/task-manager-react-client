@@ -1,6 +1,6 @@
 import { get, post, patch, Delete } from "../server";
 
-const endPointUrl = `${process.env.REACT_APP_BASE_URL}/api/v1/tasks`;
+const endPointUrl = `${import.meta.env.VITE_API_BASE_URL}/api/v1/tasks`;
 
 export function getTasks() {
   return get(endPointUrl);

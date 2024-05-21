@@ -1,4 +1,3 @@
-import React from "react";
 import { useSelector } from "react-redux";
 import {
   Box,
@@ -15,7 +14,7 @@ import Heading from "components/shared/Heading";
 import Loader from "components/shared/Loader";
 import ToDoListItem from "modules/Tasks/ToDoListItem";
 
-const ToDoList = ({ setIsEdit }) => {
+const ToDoList = () => {
   const { tasks, isLoading } = useSelector((state) => state?.tasksReducer);
 
   return (
@@ -37,7 +36,7 @@ const ToDoList = ({ setIsEdit }) => {
           </TableHead>
           <TableBody>
             {tasks.map(({ attributes: task }) => (
-              <ToDoListItem task={task} setIsEdit={setIsEdit} key={task?.id} />
+              <ToDoListItem task={task} key={task?.id} />
             ))}
           </TableBody>
         </Table>

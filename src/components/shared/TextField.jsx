@@ -1,4 +1,3 @@
-import React from "react";
 import { Box, TextField, Typography } from "@mui/material";
 import { Field } from "formik";
 
@@ -20,7 +19,7 @@ const TextFieldComponent = (props) => {
         <Typography className={classes.label}>{placeholder}</Typography>
       )}
       <Field name={name}>
-        {({ field, form, meta }) => (
+        {({ field, meta }) => (
           <TextField
             type={type}
             value={field?.value}

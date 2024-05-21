@@ -1,6 +1,6 @@
 import { post, Delete } from "../server";
 
-const endPointUrl = `${process.env.REACT_APP_BASE_URL}`;
+const endPointUrl = `${import.meta.env.VITE_API_BASE_URL}`;
 
 export function signUp(user) {
   return post(`${endPointUrl}/sign_up`, user);

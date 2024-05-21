@@ -1,5 +1,5 @@
 import { toast } from "react-toastify";
-import storage from "redux-persist/lib/storage";
+import storage from "redux-persist/es/storage";
 import {
   AUTH_LOADING,
   AUTH_SUCCESS,

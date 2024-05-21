@@ -1,4 +1,4 @@
-import React from "react";
+import { useState } from "react";
 import { useDispatch } from "react-redux";
 import { TableRow, TableCell, IconButton, Popover } from "@mui/material";
 import { toast } from "react-toastify";
@@ -13,10 +13,10 @@ import { deleteTask } from "store/api/tasks";
 import { withTryCatch } from "helpers/withTryCatch";
 import { styles } from "assets/styles";
 
-const ToDoListItem = ({ setIsEdit, task }) => {
+const ToDoListItem = ({ task }) => {
   const classes = styles();
   const dispatch = useDispatch();
-  const [anchorEl, setAnchorEl] = React.useState(null);
+  const [anchorEl, setAnchorEl] = useState(null);
 
   const open = Boolean(anchorEl);
   const id = open ? "simple-popover" : undefined;
@@ -30,7 +30,7 @@ const ToDoListItem = ({ setIsEdit, task }) => {
   };
 
   const handleEditTask = (id) => {
-    setIsEdit(true);
+    window.scrollTo({ top: 0, left: 0, behavior: "smooth" });
     dispatch(getSingleTask(id));
   };
 

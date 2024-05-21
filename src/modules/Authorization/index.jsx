@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from "react";
+import { useEffect, useMemo } from "react";
 import { useDispatch } from "react-redux";
 import { useNavigate } from "react-router-dom";
 import { Formik, Form } from "formik";
@@ -15,31 +15,22 @@ const LoginSignupPage = ({ isLogin = false }) => {
   const classes = styles();
   const dispatch = useDispatch();
   const navigate = useNavigate();
-  const [formState, setFormState] = useState({
-    isLogin,
-    firstName: "",
-    lastName: "",
-    email: "",
-    password: "",
-    confirmEmail: "",
-    confirmPassword: "",
-  });
-
-  useEffect(() => {
-    const token = localStorage.getItem("authToken");
-    if (token) navigate("/");
-  }, [navigate]);
-
-  useEffect(() => {
-    setFormState({
+  const formState = useMemo(
+    () => ({
       isLogin,
       firstName: "",
       lastName: "",
       email: "",
       password: "",
       confirmPassword: "",
-    });
-  }, [isLogin]);
+    }),
+    [isLogin]
+  );
+
+  useEffect(() => {
+    const token = localStorage.getItem("authToken");
+    if (token) navigate("/");
+  }, [navigate]);
 
   const handleSubmit = (values) => {
     const body = {

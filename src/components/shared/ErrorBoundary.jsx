@@ -1,4 +1,4 @@
-import React, { Component } from "react";
+import { Component } from "react";
 import { Box, Typography } from "@mui/material";
 
 class ErrorBoundary extends Component {
