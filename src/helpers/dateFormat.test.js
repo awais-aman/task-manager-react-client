@@ -1,7 +1,7 @@
 import { afterEach, describe, expect, test } from "vitest";
 import dayjs from "dayjs";
 
-import { deadlineToDay, formattedDate, toDeadlinePayload } from "./dateFormat";
+import { deadlineToDay, displayDeadline, isOverdue, toDeadlinePayload } from "./dateFormat";
 
 const originalTz = process.env.TZ;
 afterEach(() => {
@@ -13,7 +13,7 @@ describe.each(["America/Los_Angeles", "UTC", "Asia/Karachi", "Pacific/Auckland"]
   (tz) => {
     test("a stored UTC-midnight deadline shows its own calendar day", () => {
       process.env.TZ = tz;
-      expect(formattedDate("2026-11-14T00:00:00.000Z")).toBe("2026-11-14");
+      expect(displayDeadline("2026-11-14T00:00:00.000Z")).toBe("14 Nov 2026");
     });
 
     test("the picked day is sent without a timezone shift", () => {
@@ -36,7 +36,15 @@ test("the timezone switch is live, so the cases above really cross midnight", ()
 });
 
 test("empty and invalid values do not render as Invalid date", () => {
-  expect(formattedDate(null)).toBe("");
-  expect(formattedDate("not a date")).toBe("");
+  expect(displayDeadline(null)).toBe("No deadline");
+  expect(displayDeadline("not a date")).toBe("No deadline");
   expect(toDeadlinePayload(null)).toBeNull();
+});
+
+test("a task is overdue only before its day and while still open", () => {
+  const today = dayjs(new Date(2026, 10, 14));
+  const task = { deadline: "2026-11-13T00:00:00.000Z", status: "pending" };
+  expect(isOverdue(task, today)).toBe(true);
+  expect(isOverdue({ ...task, deadline: "2026-11-14T00:00:00.000Z" }, today)).toBe(false);
+  expect(isOverdue({ ...task, status: "completed" }, today)).toBe(false);
 });

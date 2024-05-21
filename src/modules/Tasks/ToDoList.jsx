@@ -1,46 +1,94 @@
-import { useSelector } from "react-redux";
+import { useDispatch, useSelector } from "react-redux";
 import {
+  Alert,
   Box,
-  TableContainer,
-  Table,
+  Button,
+  LinearProgress,
   Paper,
-  TableHead,
-  TableRow,
-  TableCell,
-  TableBody,
+  Skeleton,
+  Typography,
 } from "@mui/material";
 
-import Heading from "components/shared/Heading";
-import Loader from "components/shared/Loader";
 import ToDoListItem from "modules/Tasks/ToDoListItem";
+import { fetchTasks } from "store/slices/tasksSlice";
+import { isOverdue } from "helpers/dateFormat";
+
+const summarise = (tasks) => {
+  const open = tasks.filter((task) => task.status !== "completed").length;
+  const overdue = tasks.filter((task) => isOverdue(task)).length;
+  return [
+    `${tasks.length} ${tasks.length === 1 ? "task" : "tasks"}`,
+    `${open} open`,
+    overdue ? `${overdue} overdue` : null,
+  ]
+    .filter(Boolean)
+    .join(" · ");
+};
 
 const ToDoList = () => {
-  const { items: tasks, status } = useSelector((state) => state.tasks);
+  const dispatch = useDispatch();
+  const { items: tasks, status, error } = useSelector((state) => state.tasks);
+  const loading = status === "loading" || status === "idle";
+
+  let body;
+  if (status === "failed") {
+    body = (
+      <Alert
+        severity="error"
+        action={
+          <Button color="inherit" size="small" onClick={() => dispatch(fetchTasks())}>
+            Retry
+          </Button>
+        }
+      >
+        {error?.[0] ?? "Your tasks could not be loaded."}
+      </Alert>
+    );
+  } else if (loading && tasks.length === 0) {
+    body = (
+      <Box aria-hidden sx={{ display: "grid", gap: 1.5 }}>
+        {[0, 1, 2].map((key) => (
+          <Skeleton key={key} variant="rounded" height={92} />
+        ))}
+      </Box>
+    );
+  } else if (tasks.length === 0) {
+    body = (
+      <Paper sx={{ p: 4, textAlign: "center", borderStyle: "dashed" }}>
+        <Typography variant="h3" component="p">
+          No tasks yet
+        </Typography>
+        <Typography color="text.secondary" sx={{ mt: 1 }}>
+          Add your first task with the form and it will be listed here.
+        </Typography>
+      </Paper>
+    );
+  } else {
+    body = (
+      <Box component="ul" sx={{ listStyle: "none", p: 0, m: 0, display: "grid", gap: 1.5 }}>
+        {tasks.map((task) => (
+          <ToDoListItem task={task} key={task.id} />
+        ))}
+      </Box>
+    );
+  }
 
   return (
-    <Box>
-      {status === "loading" && <Loader />}
-      <Heading text="My To Do List" />
-      <TableContainer component={Paper}>
-        <Table aria-label="simple table">
-          <TableHead>
-            <TableRow>
-              <TableCell>ID</TableCell>
-              <TableCell>Title</TableCell>
-              <TableCell>Description</TableCell>
-              <TableCell>Priority</TableCell>
-              <TableCell>Status</TableCell>
-              <TableCell>Deadline</TableCell>
-              <TableCell align="right">Actions</TableCell>
-            </TableRow>
-          </TableHead>
-          <TableBody>
-            {tasks.map((task) => (
-              <ToDoListItem task={task} key={task.id} />
-            ))}
-          </TableBody>
-        </Table>
-      </TableContainer>
+    <Box component="section" aria-labelledby="task-list-heading" aria-busy={loading}>
+      <Box sx={{ display: "flex", alignItems: "baseline", justifyContent: "space-between", gap: 2, flexWrap: "wrap", mb: 2 }}>
+        <Typography id="task-list-heading" variant="h1" component="h2">
+          Your tasks
+        </Typography>
+        {status === "succeeded" && tasks.length > 0 && (
+          <Typography color="text.secondary" sx={{ fontVariantNumeric: "tabular-nums" }}>
+            {summarise(tasks)}
+          </Typography>
+        )}
+      </Box>
+      <Box sx={{ height: 4, mb: 1 }}>
+        {loading && tasks.length > 0 && <LinearProgress aria-label="Refreshing tasks" />}
+      </Box>
+      {body}
     </Box>
   );
 };

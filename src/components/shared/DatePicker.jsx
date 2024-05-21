@@ -1,32 +1,27 @@
-import { AdapterDayjs } from "@mui/x-date-pickers/AdapterDayjs";
-import { LocalizationProvider } from "@mui/x-date-pickers/LocalizationProvider";
 import { DatePicker } from "@mui/x-date-pickers/DatePicker";
-import { Field } from "formik";
+import { useField } from "formik";
 
-import { styles } from "assets/styles";
+const DatePickerComponent = ({ name, label, disablePast = false }) => {
+  const [field, meta, helpers] = useField(name);
+  const hasError = Boolean(meta.touched && meta.error);
 
-const DatePickerComponent = ({ name }) => {
-  const classes = styles();
   return (
-    <Field name={name}>
-      {({ field, form, meta }) => (
-        <LocalizationProvider dateAdapter={AdapterDayjs}>
-          <DatePicker
-            className={classes.datePicker}
-            value={field?.value}
-            onChange={(newValue) => form.setFieldValue(name, newValue)}
-            format="YYYY-MM-DD"
-            disablePast
-            slotProps={{
-              textField: {
-                error: Boolean(meta.touched && meta.error),
-                helperText: meta.touched && meta.error ? meta.error : "",
-              },
-            }}
-          />
-        </LocalizationProvider>
-      )}
-    </Field>
+    <DatePicker
+      label={label}
+      value={field.value}
+      onChange={(value) => helpers.setValue(value)}
+      format="D MMM YYYY"
+      disablePast={disablePast}
+      slotProps={{
+        textField: {
+          id: name,
+          fullWidth: true,
+          error: hasError,
+          helperText: hasError ? meta.error : "",
+          onBlur: () => helpers.setTouched(true),
+        },
+      }}
+    />
   );
 };
 

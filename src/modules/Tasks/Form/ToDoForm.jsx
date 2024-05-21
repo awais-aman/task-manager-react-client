@@ -1,24 +1,17 @@
 import { useDispatch } from "react-redux";
 import { Formik, Form } from "formik";
 import { toast } from "react-toastify";
-import { Box, IconButton } from "@mui/material";
-import CancelIcon from "@mui/icons-material/Cancel";
+import { Box, Button, MenuItem, Paper, Typography } from "@mui/material";
 
 import DatePicker from "components/shared/DatePicker";
-import Heading from "components/shared/Heading";
-import Button from "components/shared/Button";
-import Autocomplete from "components/shared/Autocomplete";
 import TextField from "components/shared/TextField";
-import Loader from "components/shared/Loader";
-
 import { toastErrors } from "helpers/errorMessages";
 import { toDeadlinePayload } from "helpers/dateFormat";
 import { editCleared, fetchTasks, saveTask } from "store/slices/tasksSlice";
-import validationSchema from "modules/Tasks/Form/validationSchema";
-import { styles } from "assets/styles";
+import validationSchema, { TITLE_MAX } from "modules/Tasks/Form/validationSchema";
+import { PRIORITIES } from "modules/Tasks/status";
 
 const AddToDoForm = ({ formState, isEdit }) => {
-  const classes = styles();
   const dispatch = useDispatch();
 
   const handleSubmit = async ({ id, ...task }, { resetForm }) => {
@@ -42,47 +35,59 @@ const AddToDoForm = ({ formState, isEdit }) => {
   };
 
   return (
-    <Formik
-      enableReinitialize
-      initialValues={formState}
-      validationSchema={validationSchema}
-      onSubmit={handleSubmit}
-      validateOnBlur={false}
+    <Paper
+      component="section"
+      aria-labelledby="task-form-heading"
+      sx={{
+        p: { xs: 2.5, sm: 3 },
+        position: { md: "sticky" },
+        top: { md: 24 },
+        borderTop: 4,
+        borderTopColor: isEdit ? "secondary.main" : "primary.main",
+      }}
     >
-      {({ isSubmitting }) => (
-        <>
-          {isSubmitting && <Loader />}
-          <Box className={classes.formHeaderBox}>
-            <Heading text={isEdit ? "Edit a Task" : "Add a Task"} />
-            {isEdit && (
-              <IconButton
-                aria-label="Cancel editing"
-                onClick={() => dispatch(editCleared())}
-              >
-                <CancelIcon />
-              </IconButton>
-            )}
-          </Box>
-          <Form className={classes.tasksForm}>
-            <Box className={classes.tasksRow}>
-              <TextField name="title" placeholder="Title" isLabel={false} />
-              <TextField
-                name="description"
-                placeholder="Description"
-                isLabel={false}
-              />
+      <Typography id="task-form-heading" variant="h2" component="h2" sx={{ mb: 2 }}>
+        {isEdit ? "Edit task" : "New task"}
+      </Typography>
+      <Formik
+        enableReinitialize
+        initialValues={formState}
+        validationSchema={validationSchema}
+        onSubmit={handleSubmit}
+        validateOnBlur={false}
+      >
+        {({ isSubmitting, values }) => (
+          <Box component={Form} noValidate sx={{ display: "grid", gap: 2 }}>
+            <TextField
+              name="title"
+              label="Title"
+              helperText={`${values.title.length}/${TITLE_MAX}`}
+            />
+            <TextField name="description" label="Description" multiline minRows={2} />
+            <Box sx={{ display: "grid", gap: 2, gridTemplateColumns: { xs: "1fr", sm: "1fr 1fr", md: "1fr" } }}>
+              <TextField name="priority" label="Priority" select>
+                {PRIORITIES.map(({ value, label }) => (
+                  <MenuItem key={value} value={value}>
+                    {label}
+                  </MenuItem>
+                ))}
+              </TextField>
+              <DatePicker name="deadline" label="Deadline" disablePast={!isEdit} />
             </Box>
-            <Box className={classes.tasksRow}>
-              <Autocomplete name="priority" />
-              <DatePicker name="deadline" />
-              <Button type="submit" disabled={isSubmitting}>
-                {isEdit ? "Edit" : "Add"}
+            <Box sx={{ display: "flex", gap: 1, flexWrap: "wrap" }}>
+              <Button type="submit" variant="contained" disabled={isSubmitting}>
+                {isEdit ? "Save changes" : "Add task"}
               </Button>
+              {isEdit && (
+                <Button variant="text" color="inherit" onClick={() => dispatch(editCleared())}>
+                  Cancel
+                </Button>
+              )}
             </Box>
-          </Form>
-        </>
-      )}
-    </Formik>
+          </Box>
+        )}
+      </Formik>
+    </Paper>
   );
 };
 

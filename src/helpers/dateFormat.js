@@ -14,4 +14,10 @@ export const deadlineToDay = (value) => {
 
 export const toDeadlinePayload = (day) => deadlineToDay(day)?.format(DAY) ?? null;
 
-export const formattedDate = (value) => deadlineToDay(value)?.format(DAY) ?? "";
+export const displayDeadline = (value) =>
+  deadlineToDay(value)?.format("D MMM YYYY") ?? "No deadline";
+
+export const isOverdue = (task, today = dayjs().startOf("day")) => {
+  const day = deadlineToDay(task?.deadline);
+  return Boolean(day && task.status !== "completed" && day.isBefore(today));
+};

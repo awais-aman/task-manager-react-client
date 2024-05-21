@@ -5,7 +5,6 @@ import { Box } from "@mui/material";
 
 import AddToDoForm from "modules/Tasks/Form/ToDoForm";
 import ToDoList from "modules/Tasks/ToDoList";
-import Divider from "components/shared/Divider";
 import { fetchTasks } from "store/slices/tasksSlice";
 import { deadlineToDay } from "helpers/dateFormat";
 
@@ -33,9 +32,15 @@ const Tasks = () => {
   }, [dispatch]);
 
   return (
-    <Box>
+    <Box
+      sx={{
+        display: "grid",
+        gap: { xs: 3, md: 4 },
+        gridTemplateColumns: { xs: "minmax(0, 1fr)", md: "340px minmax(0, 1fr)" },
+        alignItems: "start",
+      }}
+    >
       <AddToDoForm formState={formState} isEdit={isEdit} />
-      <Divider />
       <ToDoList />
     </Box>
   );

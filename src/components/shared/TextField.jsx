@@ -1,37 +1,19 @@
-import { Box, TextField, Typography } from "@mui/material";
-import { Field } from "formik";
+import { TextField } from "@mui/material";
+import { useField } from "formik";
 
-import { styles } from "assets/styles";
-
-const TextFieldComponent = (props) => {
-  const {
-    name,
-    placeholder,
-    isLabel=true,
-    type="text"
-  } = props;
-
-  const classes = styles();
+const TextFieldComponent = ({ name, helperText, ...props }) => {
+  const [field, meta] = useField(name);
+  const hasError = Boolean(meta.touched && meta.error);
 
   return (
-    <Box>
-      {isLabel && (
-        <Typography className={classes.label}>{placeholder}</Typography>
-      )}
-      <Field name={name}>
-        {({ field, meta }) => (
-          <TextField
-            type={type}
-            value={field?.value}
-            placeholder={placeholder}
-            className={classes.textfield}
-            error={meta.touched && meta.error ? true : false}
-            helperText={meta.touched && meta.error ? meta.error : ""}
-            {...field}
-          />
-        )}
-      </Field>
-    </Box>
+    <TextField
+      {...field}
+      {...props}
+      id={props.id ?? name}
+      fullWidth
+      error={hasError}
+      helperText={hasError ? meta.error : helperText}
+    />
   );
 };
 
