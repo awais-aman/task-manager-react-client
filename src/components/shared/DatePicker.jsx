@@ -1,4 +1,4 @@
-import { AdapterMoment } from "@mui/x-date-pickers/AdapterMoment";
+import { AdapterDayjs } from "@mui/x-date-pickers/AdapterDayjs";
 import { LocalizationProvider } from "@mui/x-date-pickers/LocalizationProvider";
 import { DatePicker } from "@mui/x-date-pickers/DatePicker";
 import { Field } from "formik";
@@ -10,7 +10,7 @@ const DatePickerComponent = ({ name }) => {
   return (
     <Field name={name}>
       {({ field, form, meta }) => (
-        <LocalizationProvider dateAdapter={AdapterMoment}>
+        <LocalizationProvider dateAdapter={AdapterDayjs}>
           <DatePicker
             className={classes.datePicker}
             value={field?.value}

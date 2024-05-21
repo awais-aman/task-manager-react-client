@@ -1,3 +1,17 @@
-import moment from "moment";
+import dayjs from "dayjs";
 
-export const formattedDate = (date) => moment(date).format("YYYY-MM-DD");
+const DAY = "YYYY-MM-DD";
+
+// A deadline is a calendar day. The API keeps it in a datetime column, so the
+// client sends the bare day and reads back only the date part: converting the
+// stored UTC midnight to local time would move it a day in the Americas.
+export const deadlineToDay = (value) => {
+  if (!value) return null;
+  if (dayjs.isDayjs(value)) return value.startOf("day");
+  const day = dayjs(String(value).slice(0, 10));
+  return day.isValid() ? day : null;
+};
+
+export const toDeadlinePayload = (day) => deadlineToDay(day)?.format(DAY) ?? null;
+
+export const formattedDate = (value) => deadlineToDay(value)?.format(DAY) ?? "";

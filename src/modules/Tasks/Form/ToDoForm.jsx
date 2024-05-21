@@ -12,6 +12,7 @@ import TextField from "components/shared/TextField";
 import Loader from "components/shared/Loader";
 
 import { toastErrors } from "helpers/errorMessages";
+import { toDeadlinePayload } from "helpers/dateFormat";
 import { editCleared, fetchTasks, saveTask } from "store/slices/tasksSlice";
 import validationSchema from "modules/Tasks/Form/validationSchema";
 import { styles } from "assets/styles";
@@ -22,7 +23,7 @@ const AddToDoForm = ({ formState, isEdit }) => {
 
   const handleSubmit = async ({ id, ...task }, { resetForm }) => {
     try {
-      const payload = { ...task, deadline: task.deadline?.toISOString() };
+      const payload = { ...task, deadline: toDeadlinePayload(task.deadline) };
       await dispatch(
         saveTask({ id: isEdit ? id : undefined, task: payload })
       ).unwrap();

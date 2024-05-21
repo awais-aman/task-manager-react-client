@@ -1,12 +1,13 @@
 import { useEffect, useMemo } from "react";
 import { useDispatch, useSelector } from "react-redux";
-import moment from "moment";
+import dayjs from "dayjs";
 import { Box } from "@mui/material";
 
 import AddToDoForm from "modules/Tasks/Form/ToDoForm";
 import ToDoList from "modules/Tasks/ToDoList";
 import Divider from "components/shared/Divider";
 import { fetchTasks } from "store/slices/tasksSlice";
+import { deadlineToDay } from "helpers/dateFormat";
 
 const Tasks = () => {
   const dispatch = useDispatch();
@@ -21,9 +22,9 @@ const Tasks = () => {
             description: task.description,
             title: task.title,
             priority: task.priority,
-            deadline: moment(task.deadline),
+            deadline: deadlineToDay(task.deadline),
           }
-        : { title: "", description: "", priority: "low", deadline: moment() },
+        : { title: "", description: "", priority: "low", deadline: dayjs().startOf("day") },
     [task]
   );
 
