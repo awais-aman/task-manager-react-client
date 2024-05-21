@@ -1,8 +1,7 @@
-import { useState } from "react";
 import { useDispatch } from "react-redux";
 import { Formik, Form } from "formik";
 import { toast } from "react-toastify";
-import { IconButton } from "@mui/material";
+import { Box, IconButton } from "@mui/material";
 import CancelIcon from "@mui/icons-material/Cancel";
 
 import DatePicker from "components/shared/DatePicker";
@@ -12,86 +11,72 @@ import Autocomplete from "components/shared/Autocomplete";
 import TextField from "components/shared/TextField";
 import Loader from "components/shared/Loader";
 
-import { withTryCatch } from "helpers/withTryCatch";
-import { createTask, updateTask } from "store/api/tasks";
-import { getAllTasks } from "store/actions/tasks";
-import { RESET_SINGLE_TASK } from "store/constants/taskConstants";
+import { toastErrors } from "helpers/errorMessages";
+import { editCleared, fetchTasks, saveTask } from "store/slices/tasksSlice";
 import validationSchema from "modules/Tasks/Form/validationSchema";
 import { styles } from "assets/styles";
-import { Box } from "@mui/material";
 
 const AddToDoForm = ({ formState, isEdit }) => {
   const classes = styles();
-  const [isLoading, setIsLoading] = useState(false);
   const dispatch = useDispatch();
 
-  const handleSubmit = (values, { resetForm }) => {
-    setIsLoading(true);
-    const body = {
-      task: {
-        ...values,
-      },
-    };
-    withTryCatch(
-      {
-        tryFunc: () =>
-          isEdit ? updateTask(values?.id, body) : createTask(body),
-        success: () => {
-          dispatch({ type: RESET_SINGLE_TASK });
-          dispatch(getAllTasks());
-          resetForm();
-          toast.success(`Task ${isEdit ? "updated" : "created"} successfully`);
-        },
-      },
-      null,
-      () => setIsLoading(false)
-    );
-  };
-
-  const handleClearForm = () => {
-    dispatch({ type: RESET_SINGLE_TASK });
+  const handleSubmit = async ({ id, ...task }, { resetForm }) => {
+    try {
+      const payload = { ...task, deadline: task.deadline?.toISOString() };
+      await dispatch(
+        saveTask({ id: isEdit ? id : undefined, task: payload })
+      ).unwrap();
+      dispatch(editCleared());
+      dispatch(fetchTasks());
+      resetForm();
+      toast.success(`Task ${isEdit ? "updated" : "created"} successfully`);
+    } catch (messages) {
+      toastErrors(messages);
+    }
   };
 
   return (
-    <>
-      {isLoading && <Loader />}
-
-      <Formik
-        enableReinitialize
-        initialValues={formState}
-        validationSchema={validationSchema}
-        onSubmit={handleSubmit}
-        validateOnBlur={false}
-      >
-        {() => (
-          <>
-            <Box className={classes.formHeaderBox}>
-              <Heading text={isEdit ? "Edit a Task" : "Add a Task"} />
-              {isEdit && (
-                <IconButton onClick={handleClearForm}>
-                  <CancelIcon />
-                </IconButton>
-              )}
+    <Formik
+      enableReinitialize
+      initialValues={formState}
+      validationSchema={validationSchema}
+      onSubmit={handleSubmit}
+      validateOnBlur={false}
+    >
+      {({ isSubmitting }) => (
+        <>
+          {isSubmitting && <Loader />}
+          <Box className={classes.formHeaderBox}>
+            <Heading text={isEdit ? "Edit a Task" : "Add a Task"} />
+            {isEdit && (
+              <IconButton
+                aria-label="Cancel editing"
+                onClick={() => dispatch(editCleared())}
+              >
+                <CancelIcon />
+              </IconButton>
+            )}
+          </Box>
+          <Form className={classes.tasksForm}>
+            <Box className={classes.tasksRow}>
+              <TextField name="title" placeholder="Title" isLabel={false} />
+              <TextField
+                name="description"
+                placeholder="Description"
+                isLabel={false}
+              />
             </Box>
-            <Form className={classes.tasksForm}>
-              <Box className={classes.tasksRow}>
-                <TextField name="title" placeholder="Title" isLabel={false} />
-                <TextField
-                  name="description"
-                  placeholder="Description"
-                  isLabel={false}
-                />
-              </Box>
-              <Box className={classes.tasksRow}>
-                <Autocomplete name="priority" />
-                <DatePicker name="deadline" />
-                <Button type="submit">{isEdit ? "Edit" : "Add"}</Button>
-              </Box>
-            </Form>
-          </>
-        )}
-      </Formik>
-    </>
+            <Box className={classes.tasksRow}>
+              <Autocomplete name="priority" />
+              <DatePicker name="deadline" />
+              <Button type="submit" disabled={isSubmitting}>
+                {isEdit ? "Edit" : "Add"}
+              </Button>
+            </Box>
+          </Form>
+        </>
+      )}
+    </Formik>
   );
 };
 

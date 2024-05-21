@@ -6,11 +6,11 @@ import { Box } from "@mui/material";
 import AddToDoForm from "modules/Tasks/Form/ToDoForm";
 import ToDoList from "modules/Tasks/ToDoList";
 import Divider from "components/shared/Divider";
-import { getAllTasks } from "store/actions/tasks";
+import { fetchTasks } from "store/slices/tasksSlice";
 
 const Tasks = () => {
   const dispatch = useDispatch();
-  const { task } = useSelector((state) => state?.tasksReducer);
+  const task = useSelector((state) => state.tasks.editing);
   const isEdit = Boolean(task);
 
   const formState = useMemo(
@@ -28,7 +28,7 @@ const Tasks = () => {
   );
 
   useEffect(() => {
-    dispatch(getAllTasks());
+    dispatch(fetchTasks());
   }, [dispatch]);
 
   return (

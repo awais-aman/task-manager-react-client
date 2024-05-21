@@ -12,30 +12,21 @@ import PendingIcon from "@mui/icons-material/Pending";
 import AutorenewIcon from "@mui/icons-material/Autorenew";
 import CheckCircleIcon from "@mui/icons-material/CheckCircle";
 
-import { withTryCatch } from "helpers/withTryCatch";
-import { updateTask } from "store/api/tasks";
-import { getAllTasks } from "store/actions/tasks";
-import { RESET_SINGLE_TASK } from "store/constants/taskConstants";
+import { toastErrors } from "helpers/errorMessages";
+import { editCleared, fetchTasks, saveTask } from "store/slices/tasksSlice";
 
 const MoreActions = ({ task, setAnchorEl }) => {
   const dispatch = useDispatch();
 
   const handleTaskUpdateStatus = (status) => {
-    const body = {
-      task: {
-        ...task,
-        status,
-      },
-    };
-    withTryCatch({
-      tryFunc: () => updateTask(task?.id, body),
-      success: () => {
-        dispatch(getAllTasks());
-        dispatch({ type: RESET_SINGLE_TASK });
+    dispatch(saveTask({ id: task.id, task: { status } }))
+      .unwrap()
+      .then(() => {
+        dispatch(fetchTasks());
+        dispatch(editCleared());
         setAnchorEl(null);
         toast.success("Status updated successfully");
-      },
-    });
+      }, toastErrors);
   };
 
   return (

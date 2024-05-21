@@ -15,11 +15,11 @@ import Loader from "components/shared/Loader";
 import ToDoListItem from "modules/Tasks/ToDoListItem";
 
 const ToDoList = () => {
-  const { tasks, isLoading } = useSelector((state) => state?.tasksReducer);
+  const { items: tasks, status } = useSelector((state) => state.tasks);
 
   return (
     <Box>
-      {isLoading && <Loader />}
+      {status === "loading" && <Loader />}
       <Heading text="My To Do List" />
       <TableContainer component={Paper}>
         <Table aria-label="simple table">
@@ -35,8 +35,8 @@ const ToDoList = () => {
             </TableRow>
           </TableHead>
           <TableBody>
-            {tasks.map(({ attributes: task }) => (
-              <ToDoListItem task={task} key={task?.id} />
+            {tasks.map((task) => (
+              <ToDoListItem task={task} key={task.id} />
             ))}
           </TableBody>
         </Table>

@@ -1,20 +1,24 @@
-import { useEffect, useMemo } from "react";
-import { useDispatch } from "react-redux";
-import { useNavigate } from "react-router-dom";
+import { useMemo } from "react";
+import { useDispatch, useSelector } from "react-redux";
+import { Navigate, useNavigate } from "react-router-dom";
 import { Formik, Form } from "formik";
 import { Box } from "@mui/material";
+import { toast } from "react-toastify";
 
 import Heading from "components/shared/Heading";
 import TextField from "components/shared/TextField";
 import Button from "components/shared/Button";
 import validationSchema from "modules/Authorization/validationSchema";
 import { styles } from "assets/styles";
-import { loginAction } from "store/actions/auth";
+import { authenticate, selectIsSignedIn } from "store/slices/authSlice";
+import { toastErrors } from "helpers/errorMessages";
 
 const LoginSignupPage = ({ isLogin = false }) => {
   const classes = styles();
   const dispatch = useDispatch();
   const navigate = useNavigate();
+  const signedIn = useSelector(selectIsSignedIn);
+
   const formState = useMemo(
     () => ({
       isLogin,
@@ -27,23 +31,30 @@ const LoginSignupPage = ({ isLogin = false }) => {
     [isLogin]
   );
 
-  useEffect(() => {
-    const token = localStorage.getItem("authToken");
-    if (token) navigate("/");
-  }, [navigate]);
+  if (signedIn) return <Navigate to="/" replace />;
 
-  const handleSubmit = (values) => {
-    const body = {
-      user: {
-        email: values?.email,
-        password: values?.password,
-      },
+  const handleSubmit = async (values) => {
+    const credentials = {
+      user: { email: values.email.trim(), password: values.password },
     };
     if (!isLogin) {
-      body.user.first_name = values?.firstName;
-      body.user.last_name = values?.lastName;
+      credentials.user.first_name = values.firstName.trim();
+      credentials.user.last_name = values.lastName.trim();
     }
-    dispatch(loginAction(body, isLogin, navigate));
+    try {
+      const session = await dispatch(
+        authenticate({ credentials, isLogin })
+      ).unwrap();
+      if (session.token) {
+        toast.success(isLogin ? "Logged in successfully" : "Registered successfully");
+        navigate("/", { replace: true });
+      } else {
+        toast.success("Account created. Log in to continue.");
+        navigate("/login");
+      }
+    } catch (messages) {
+      toastErrors(messages);
+    }
   };
 
   const switchAuthHandler = () => {
@@ -60,7 +71,7 @@ const LoginSignupPage = ({ isLogin = false }) => {
         onSubmit={handleSubmit}
         validateOnBlur={false}
       >
-        {() => (
+        {({ isSubmitting }) => (
           <Form className={classes.authForm}>
             {!isLogin && (
               <TextField name="firstName" placeholder="First Name" />
@@ -75,7 +86,9 @@ const LoginSignupPage = ({ isLogin = false }) => {
                 placeholder="Confirm Password"
               />
             )}
-            <Button type="submit">{isLogin ? "Login" : "Sign Up"}</Button>
+            <Button type="submit" disabled={isSubmitting}>
+              {isLogin ? "Login" : "Sign Up"}
+            </Button>
           </Form>
         )}
       </Formik>

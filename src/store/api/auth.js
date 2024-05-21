@@ -1,15 +1,7 @@
-import { post, Delete } from "../server";
+import { api } from "./client";
 
-const endPointUrl = `${import.meta.env.VITE_API_BASE_URL}`;
+export const signUp = (body) => api.post("/sign_up", body);
 
-export function signUp(user) {
-  return post(`${endPointUrl}/sign_up`, user);
-}
+export const login = (body) => api.post("/login", body);
 
-export function login(user) {
-  return post(`${endPointUrl}/login`, user);
-}
-
-export function logout() {
-  return Delete(`${endPointUrl}/logout`);
-}
+export const logout = () => api.delete("/logout");

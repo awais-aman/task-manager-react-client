@@ -10,7 +10,7 @@ export default defineConfig({
     // Keep the CRA-era "baseUrl: src" imports (e.g. "store/actions/auth").
     alias: [
       {
-        find: /^(assets|components|helpers|modules|routes|store)\//,
+        find: /^(assets|components|helpers|modules|routes|store|test)\//,
         replacement: `${src}/$1/`,
       },
     ],
@@ -20,5 +20,7 @@ export default defineConfig({
     environment: "jsdom",
     setupFiles: ["./src/setupTests.js"],
     css: false,
+    // Same origin as jsdom, so the mocked API needs no CORS headers.
+    env: { VITE_API_BASE_URL: "http://localhost:3000" },
   },
 });

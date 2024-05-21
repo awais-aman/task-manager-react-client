@@ -3,16 +3,16 @@ import { useDispatch, useSelector } from "react-redux";
 import LogoutIcon from "@mui/icons-material/Logout";
 
 import { layoutStyles } from "components/layouts/layoutStyles";
-import { logoutAction } from "store/actions/auth";
+import { logout } from "store/slices/authSlice";
 
 const Header = () => {
   const classes = layoutStyles();
 
-  const dispath = useDispatch();
+  const dispatch = useDispatch();
 
-  const { user } = useSelector((state) => state.authReducer);
+  const { user } = useSelector((state) => state.auth);
 
-  const handleLogout = () => dispath(logoutAction());
+  const handleLogout = () => dispatch(logout());
 
   return (
     <Box className={classes.headerContainer}>

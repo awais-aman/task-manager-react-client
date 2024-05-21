@@ -8,9 +8,8 @@ import BorderColorIcon from "@mui/icons-material/BorderColor";
 
 import MoreActions from "modules/Tasks/MoreActions";
 import { formattedDate } from "helpers/dateFormat";
-import { getAllTasks, getSingleTask } from "store/actions/tasks";
-import { deleteTask } from "store/api/tasks";
-import { withTryCatch } from "helpers/withTryCatch";
+import { fetchTask, removeTask } from "store/slices/tasksSlice";
+import { toastErrors } from "helpers/errorMessages";
 import { styles } from "assets/styles";
 
 const ToDoListItem = ({ task }) => {
@@ -31,17 +30,13 @@ const ToDoListItem = ({ task }) => {
 
   const handleEditTask = (id) => {
     window.scrollTo({ top: 0, left: 0, behavior: "smooth" });
-    dispatch(getSingleTask(id));
+    dispatch(fetchTask(id)).unwrap().catch(toastErrors);
   };
 
   const handleDeleteTask = (id) => {
-    withTryCatch({
-      tryFunc: () => deleteTask(id),
-      success: () => {
-        dispatch(getAllTasks(id));
-        toast.success("Task deleted successfully");
-      },
-    });
+    dispatch(removeTask(id))
+      .unwrap()
+      .then(() => toast.success("Task deleted successfully"), toastErrors);
   };
 
   return (

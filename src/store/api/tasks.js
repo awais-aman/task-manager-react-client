@@ -1,23 +1,13 @@
-import { get, post, patch, Delete } from "../server";
+import { api } from "./client";
 
-const endPointUrl = `${import.meta.env.VITE_API_BASE_URL}/api/v1/tasks`;
+const TASKS = "/api/v1/tasks";
 
-export function getTasks() {
-  return get(endPointUrl);
-}
+export const getTasks = () => api.get(TASKS);
 
-export function getTask(id) {
-  return get(`${endPointUrl}/${id}`);
-}
+export const getTask = (id) => api.get(`${TASKS}/${id}`);
 
-export function createTask(body) {
-  return post(endPointUrl, body);
-}
+export const createTask = (body) => api.post(TASKS, body);
 
-export function updateTask(id, body) {
-  return patch(`${endPointUrl}/${id}`, body);
-}
+export const updateTask = (id, body) => api.patch(`${TASKS}/${id}`, body);
 
-export function deleteTask(id) {
-  return Delete(`${endPointUrl}/${id}`);
-}
+export const deleteTask = (id) => api.delete(`${TASKS}/${id}`);
