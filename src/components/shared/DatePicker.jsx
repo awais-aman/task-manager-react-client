@@ -19,6 +19,7 @@ const DatePickerComponent = ({ name }) => {
             disablePast
             slotProps={{
               textField: {
+                error: Boolean(meta.touched && meta.error),
                 helperText: meta.touched && meta.error ? meta.error : "",
               },
             }}

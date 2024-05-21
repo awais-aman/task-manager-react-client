@@ -14,6 +14,13 @@ import CheckCircleIcon from "@mui/icons-material/CheckCircle";
 
 import { toastErrors } from "helpers/errorMessages";
 import { editCleared, fetchTasks, saveTask } from "store/slices/tasksSlice";
+import { TASK_STATUSES } from "modules/Tasks/status";
+
+const ICONS = {
+  pending: PendingIcon,
+  "In progress": AutorenewIcon,
+  completed: CheckCircleIcon,
+};
 
 const MoreActions = ({ task, setAnchorEl }) => {
   const dispatch = useDispatch();
@@ -32,35 +39,20 @@ const MoreActions = ({ task, setAnchorEl }) => {
   return (
     <Box>
       <List>
-        {task?.status !== "pending" && (
-          <ListItem disablePadding>
-            <ListItemButton onClick={() => handleTaskUpdateStatus(0)}>
-              <ListItemIcon>
-                <PendingIcon />
-              </ListItemIcon>
-              <ListItemText primary="Mark as Pending" />
-            </ListItemButton>
-          </ListItem>
-        )}
-        {task?.status !== "in_progress" && (
-          <ListItem disablePadding>
-            <ListItemButton onClick={() => handleTaskUpdateStatus(1)}>
-              <ListItemIcon>
-                <AutorenewIcon />
-              </ListItemIcon>
-              <ListItemText primary="Mark as In Progress" />
-            </ListItemButton>
-          </ListItem>
-        )}
-        {task?.status !== "completed" && (
-          <ListItem disablePadding>
-            <ListItemButton onClick={() => handleTaskUpdateStatus(2)}>
-              <ListItemIcon>
-                <CheckCircleIcon />
-              </ListItemIcon>
-              <ListItemText primary="Mark as Completed" />
-            </ListItemButton>
-          </ListItem>
+        {TASK_STATUSES.filter(({ value }) => value !== task.status).map(
+          ({ value, label }) => {
+            const Icon = ICONS[value];
+            return (
+              <ListItem disablePadding key={value}>
+                <ListItemButton onClick={() => handleTaskUpdateStatus(value)}>
+                  <ListItemIcon>
+                    <Icon />
+                  </ListItemIcon>
+                  <ListItemText primary={`Mark as ${label}`} />
+                </ListItemButton>
+              </ListItem>
+            );
+          }
         )}
       </List>
     </Box>

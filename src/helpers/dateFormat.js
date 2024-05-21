@@ -7,7 +7,7 @@ const DAY = "YYYY-MM-DD";
 // stored UTC midnight to local time would move it a day in the Americas.
 export const deadlineToDay = (value) => {
   if (!value) return null;
-  if (dayjs.isDayjs(value)) return value.startOf("day");
+  if (dayjs.isDayjs(value)) return value.isValid() ? value.startOf("day") : null;
   const day = dayjs(String(value).slice(0, 10));
   return day.isValid() ? day : null;
 };

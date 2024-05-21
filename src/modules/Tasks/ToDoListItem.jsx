@@ -7,6 +7,7 @@ import MoreVertIcon from "@mui/icons-material/MoreVert";
 import BorderColorIcon from "@mui/icons-material/BorderColor";
 
 import MoreActions from "modules/Tasks/MoreActions";
+import { statusLabel } from "modules/Tasks/status";
 import { formattedDate } from "helpers/dateFormat";
 import { fetchTask, removeTask } from "store/slices/tasksSlice";
 import { toastErrors } from "helpers/errorMessages";
@@ -45,7 +46,7 @@ const ToDoListItem = ({ task }) => {
       <TableCell>{task?.title}</TableCell>
       <TableCell>{task?.description}</TableCell>
       <TableCell className={classes.capitalizeText}>{task?.priority}</TableCell>
-      <TableCell className={classes.capitalizeText}>{task?.status}</TableCell>
+      <TableCell>{statusLabel(task?.status)}</TableCell>
       <TableCell>{formattedDate(task?.deadline)}</TableCell>
       <TableCell align="right">
         <IconButton onClick={() => handleEditTask(task?.id)}>

@@ -23,7 +23,12 @@ const AddToDoForm = ({ formState, isEdit }) => {
 
   const handleSubmit = async ({ id, ...task }, { resetForm }) => {
     try {
-      const payload = { ...task, deadline: toDeadlinePayload(task.deadline) };
+      const payload = {
+        ...task,
+        title: task.title.trim(),
+        description: task.description.trim(),
+        deadline: toDeadlinePayload(task.deadline),
+      };
       await dispatch(
         saveTask({ id: isEdit ? id : undefined, task: payload })
       ).unwrap();
