@@ -6,19 +6,19 @@ import jsxA11y from "eslint-plugin-jsx-a11y";
 
 export default [
   { ignores: ["dist", "coverage", "node_modules"] },
+  { settings: { react: { version: "detect" } } },
   js.configs.recommended,
   react.configs.flat.recommended,
   react.configs.flat["jsx-runtime"],
   jsxA11y.flatConfigs.recommended,
   {
-    files: ["**/*.{js,jsx}"],
+    files: ["**/*.{js,jsx,mjs}"],
     languageOptions: {
       ecmaVersion: "latest",
       sourceType: "module",
       globals: { ...globals.browser, ...globals.node },
       parserOptions: { ecmaFeatures: { jsx: true } },
     },
-    settings: { react: { version: "detect" } },
     plugins: { "react-hooks": reactHooks },
     rules: {
       ...reactHooks.configs.recommended.rules,

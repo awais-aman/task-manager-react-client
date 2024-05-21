@@ -14,7 +14,8 @@
     "preview": "vite preview",
     "test": "vitest run",
     "test:watch": "vitest",
-    "lint": "eslint . --max-warnings=0"
+    "lint": "eslint . --max-warnings=0",
+    "screenshots": "node scripts/screenshots.mjs"
   },
   "dependencies": {
     "@emotion/react": "^11.14.0",
@@ -50,6 +51,7 @@
     "globals": "^17.14.0",
     "jsdom": "^31.0.0",
     "msw": "^3.0.4",
+    "playwright": "1.64.1",
     "vite": "^8.3.7",
     "vitest": "^5.1.0"
   }
