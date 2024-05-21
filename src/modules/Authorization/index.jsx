@@ -61,6 +61,7 @@ const LoginSignupPage = ({ isLogin = false }) => {
         minHeight: "100vh",
         display: "grid",
         gridTemplateColumns: { xs: "1fr", md: "5fr 7fr" },
+        gridTemplateRows: { xs: "auto 1fr", md: "1fr" },
       }}
     >
       <Box
